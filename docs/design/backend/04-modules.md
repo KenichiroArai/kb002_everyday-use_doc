@@ -46,7 +46,7 @@ flowchart TB
   minutesLogic --> minutesDao["DefaultMinutesDaoImpl"]
   dataLogic --> dataDao["CarryoverDataDaoImpl"]
   summaryData --> dataDao
-  dataLogic --> message["MessageLogicImpl"]
+  dataLogic --> message["DailyTasksMessageSource"]
   parseLogic --> message
   service --> message
   command --> message
@@ -91,19 +91,17 @@ classDiagram
   class CarryoverAggregateLogic {
     <<interface>>
   }
-  class MessageLogic {
-    <<interface>>
-  }
+  class DailyTasksMessageSource
 
   CarryoverCommandImpl ..|> CarryoverCommand
   CarryoverServiceImpl ..|> CarryoverService
   CarryoverCollectServiceImpl ..|> CarryoverCollectService
   CarryoverAggregateServiceImpl ..|> CarryoverAggregateService
   CarryoverCommandImpl ..> CarryoverService
-  CarryoverCommandImpl ..> MessageLogic
+  CarryoverCommandImpl ..> DailyTasksMessageSource
   CarryoverServiceImpl ..> CarryoverCollectService
   CarryoverServiceImpl ..> CarryoverAggregateService
-  CarryoverServiceImpl ..> MessageLogic
+  CarryoverServiceImpl ..> DailyTasksMessageSource
   CarryoverCollectServiceImpl ..> DailyTaskIssueLogic
   CarryoverCollectServiceImpl ..> DefaultMinutesLogic
   CarryoverCollectServiceImpl ..> CarryoverDataLogic
@@ -148,10 +146,7 @@ classDiagram
     <<interface>>
   }
   class DefaultMinutesDaoImpl
-  class MessageLogic {
-    <<interface>>
-  }
-  class MessageLogicImpl
+  class DailyTasksMessageSource
 
   DailyTaskIssueLogicImpl ..|> DailyTaskIssueLogic
   DefaultMinutesLogicImpl ..|> DefaultMinutesLogic
@@ -161,14 +156,13 @@ classDiagram
   GitHubIssueApiImpl ..|> GitHubIssueApi
   CarryoverDataDaoImpl ..|> CarryoverDataDao
   DefaultMinutesDaoImpl ..|> DefaultMinutesDao
-  MessageLogicImpl ..|> MessageLogic
   DailyTaskIssueLogicImpl ..> GitHubIssueApi
   DefaultMinutesLogicImpl ..> DefaultMinutesDao
   CarryoverDataLogicImpl ..> CarryoverDataDao
-  CarryoverDataLogicImpl ..> MessageLogic
-  CarryoverParseLogicImpl ..> MessageLogic
-  GitHubIssueApiImpl ..> MessageLogic
-  DefaultMinutesDaoImpl ..> MessageLogic
+  CarryoverDataLogicImpl ..> DailyTasksMessageSource
+  CarryoverParseLogicImpl ..> DailyTasksMessageSource
+  GitHubIssueApiImpl ..> DailyTasksMessageSource
+  DefaultMinutesDaoImpl ..> DailyTasksMessageSource
 ```
 
 ## presentation
@@ -241,13 +235,12 @@ classDiagram
 
 ## infrastructure
 
-| 型                 | 種類         | 役割                                                                 |
-| ------------------ | ------------ | -------------------------------------------------------------------- |
-| `MessageLogic`     | インタフェース | メッセージキーから文面を返す。実装は `MessageLogicImpl`            |
-| `MessageLogicImpl` | ロジック     | Spring の `MessageSource` を引数なしで引く。`{}` や `%s` はそのまま返す |
-| `Gr002GenMsgTypes` | 列挙型       | 使い方と例外。コードは `GR002_GEN11xxx`                              |
-| `Gr002LogMsgTypes` | 列挙型       | ログ。コードは `GR002_LOG12xxx`                                      |
-| `Gr002ValMsgTypes` | 列挙型       | バリデーション。コードは `GR002_VAL13xxx`。該当がなければ `NONE` だけ |
+| 型                         | 種類     | 役割                                                                 |
+| -------------------------- | -------- | -------------------------------------------------------------------- |
+| `DailyTasksMessageSource`  | コンテキスト | kmg-fund の `KmgMessageSource` を継承。追加ロジックは持たない。ログ・例外は `[キー] 文面`、一般は文面のみ |
+| `Gr002GenMsgTypes`         | 列挙型   | 使い方と例外。コードは `GR002_GEN11xxx`                              |
+| `Gr002LogMsgTypes`         | 列挙型   | ログ。コードは `GR002_LOG12xxx`                                      |
+| `Gr002ValMsgTypes`         | 列挙型   | バリデーション。コードは `GR002_VAL13xxx`。該当がなければ `NONE` だけ |
 
 メッセージの取得とプロパティの対応は [05. 品質・運用](05-quality.md) です。
 

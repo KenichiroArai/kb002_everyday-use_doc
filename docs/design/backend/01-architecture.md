@@ -32,8 +32,7 @@ gr002_daily-tasks/
         dto/                      # repository と受け渡す DTO
         types/                    # 対象セクション、解析の正規表現と固定文字列
       infrastructure/             # 業務を知らない汎用の部品
-        logic/                    # MessageLogic
-        logic/impl/               # MessageLogicImpl
+        context/                  # DailyTasksMessageSource（KmgMessageSource を継承）
         types/msg/                # Gr002GenMsgTypes、Gr002LogMsgTypes、Gr002ValMsgTypes
       repository/                 # データアクセス
         api/github/               # GitHubIssueApiImpl
@@ -124,7 +123,7 @@ flowchart TB
     minutesDao["DefaultMinutesDaoImpl"]
   end
   subgraph infrastructureLayer [infrastructure]
-    message["MessageLogicImpl"]
+    message["DailyTasksMessageSource"]
   end
   githubRest["GitHub REST API"]
   jsonFiles["docs/data の JSON"]
@@ -142,12 +141,12 @@ flowchart TB
   issueLogic -->|"GitHubIssueApi"| githubApi
   minutesLogic -->|"DefaultMinutesDao"| minutesDao
   dataLogic -->|"CarryoverDataDao"| dataDao
-  command -->|"MessageLogic"| message
-  service -->|"MessageLogic"| message
-  dataLogic -->|"MessageLogic"| message
-  parseLogic -->|"MessageLogic"| message
-  githubApi -->|"MessageLogic"| message
-  minutesDao -->|"MessageLogic"| message
+  command -->|"DailyTasksMessageSource"| message
+  service -->|"DailyTasksMessageSource"| message
+  dataLogic -->|"DailyTasksMessageSource"| message
+  parseLogic -->|"DailyTasksMessageSource"| message
+  githubApi -->|"DailyTasksMessageSource"| message
+  minutesDao -->|"DailyTasksMessageSource"| message
   githubApi -->|"Issue の一覧"| githubRest
   dataDao -->|"issues と summary.json"| jsonFiles
   minutesDao -->|"標準時間"| minutesFile
@@ -183,7 +182,7 @@ flowchart TB
 
 インスタンスの生存期間で共通な情報（複数メソッドで同じ値を使う値、そのオブジェクトが何に対する処理かを決める値）は `initialize` で受け取り、フィールドに保持します。コンストラクタではこの情報を受け取りません。`initialize` の戻り値は void で、失敗は例外です。
 
-- 共同作業者（ロジック、DAO、API、`MessageLogic`）はコンストラクタの引数とし、`initialize` の引数にしない
+- 共同作業者（ロジック、DAO、API、`DailyTasksMessageSource`）はコンストラクタの引数とし、`initialize` の引数にしない
 - メソッドごとに変わる入力（1 件の Issue、保存する解析結果、集計そのもの）は引数のままにする
 - 1 メソッドの中だけで使う計算結果はローカル変数のままにする
 

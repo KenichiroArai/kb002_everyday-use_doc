@@ -30,15 +30,16 @@
 
 ## メッセージ
 
-文面はプロパティファイルに置き、キーは列挙型の `key` です。取得はインスタンス変数に注入した `MessageLogic#get` を使います。
+文面はプロパティファイルに置き、キーは列挙型の `key` です。取得はインスタンス変数に注入した `DailyTasksMessageSource` を使います。`DailyTasksMessageSource` は kmg-fund の `KmgMessageSource` を継承し、追加ロジックは持ちません。
 
-| ファイル                    | 列挙型              | 用途                         |
-| --------------------------- | ------------------- | ---------------------------- |
-| `messages.properties`       | `Gr002GenMsgTypes`  | 使い方、例外                 |
-| `messages-log.properties`   | `Gr002LogMsgTypes`  | ログ                         |
-| （バリデーション用の文面）  | `Gr002ValMsgTypes`  | 該当がなければ `NONE` だけ   |
+| ファイル                    | 列挙型              | 用途                         | 取得メソッド | 出力形式 |
+| --------------------------- | ------------------- | ---------------------------- | ------------ | -------- |
+| `messages-log.properties`   | `Gr002LogMsgTypes`  | ログ                         | `getLogMessage` | `[キー] 文面` |
+| `messages.properties`       | `Gr002GenMsgTypes`  | 例外                         | `getExcMessage` | `[キー] 文面` |
+| `messages.properties`       | `Gr002GenMsgTypes`  | 使い方など一般               | `getGenMessage` | 文面のみ |
+| （バリデーション用の文面）  | `Gr002ValMsgTypes`  | 該当がなければ `NONE` だけ   | （同上の例外系） | `[キー] 文面` |
 
-ログは SLF4J の `{}`、例外は `String.format` の `%s` と `%d` で埋めます。取得した文面はいったん変数に入れてから渡します。解析の正規表現や日付書式はプロパティに置かず、domain の列挙型に置きます（[03. 収集処理](03-processing.md)）。
+引数なしで取得するため、メッセージ中の `{}` や `%s` / `%d` はそのまま返ります。ログは SLF4J の `{}`、例外は `String.format` の `%s` と `%d` で埋めます。取得した文面はいったん変数に入れてから渡します。解析の正規表現や日付書式はプロパティに置かず、domain の列挙型に置きます（[03. 収集処理](03-processing.md)）。
 
 ## コーディングルール
 
