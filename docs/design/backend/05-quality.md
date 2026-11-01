@@ -30,7 +30,7 @@
 
 ## メッセージ
 
-文面はプロパティファイルに置き、キーは列挙型の `key` です。取得はインスタンス変数に注入した `DailyTasksMessageSource` を使います。`DailyTasksMessageSource` は kmg-fund の `KmgMessageSource` を継承し、追加ロジックは持ちません。
+文面はプロパティファイルに置き、キーは列挙型の `key` です。取得はインスタンス変数に注入した `DailyTasksMessageSource` を使います。`DailyTasksMessageSource` は kmg-fund の `KmgMessageSource` を継承し、追加ロジックは持ちません。ログは出力箇所ごとに固有のメッセージ ID とし、[共通のコーディングルール](../../coding-rules.md#ログ) の「ログ」に従います。
 
 | ファイル                    | 列挙型              | 用途                         | 取得メソッド | 出力形式 |
 | --------------------------- | ------------------- | ---------------------------- | ------------ | -------- |
