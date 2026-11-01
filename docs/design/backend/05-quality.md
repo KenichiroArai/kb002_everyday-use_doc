@@ -39,6 +39,16 @@
 | `messages.properties`       | `Gr002GenMsgTypes`  | 使い方など一般               | `getGenMessage` | 文面のみ |
 | （バリデーション用の文面）  | `Gr002ValMsgTypes`  | 該当がなければ `NONE` だけ   | （同上の例外系） | `[キー] 文面` |
 
+コードは `GR002_{GEN|LOG|VAL}` + 5桁です。種別はプレフィックスのみで表し、5桁は層構造です。
+
+| 桁 | 意味 |
+| -- | ---- |
+| 1桁目 | 層。`0` 共通 / `1` domain / `2` infrastructure / `3` application / `4` presentation / `5` repository |
+| 2桁目 | 層内パッケージ（例: presentation の `1` = command、application の `1` = service、repository の `1` = api.github） |
+| 3〜5桁目 | 区分内の連番 `000`〜`999` |
+
+番号の帰属は呼び出し側の実装パッケージです。空きにした旧番号は再利用しません。詳細は [gr002_daily-tasks の AGENTS.md](https://github.com/KenichiroArai/gr002_daily-tasks/blob/main/AGENTS.md) の「文字列（メッセージ）の管理」に従います。
+
 引数なしで取得するため、メッセージ中の `{}` や `%s` / `%d` はそのまま返ります。ログは SLF4J の `{}`、例外は `String.format` の `%s` と `%d` で埋めます。取得した文面はいったん変数に入れてから渡します。解析の正規表現や日付書式はプロパティに置かず、domain の列挙型に置きます（[03. 収集処理](03-processing.md)）。
 
 ## コーディングルール
